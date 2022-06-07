@@ -2,8 +2,8 @@ package com.autobots;
 
 public class Money implements Expression{
 
-    private int amount;
-    private String currency;
+    private final int amount;
+    private final String currency;
 
     public Money(int amount, String currency) {
         this.amount = amount;
@@ -26,7 +26,7 @@ public class Money implements Expression{
         return new Money(amount, "CHF");
     }
 
-    public Money times(int multiplier) {
+    public Expression times(int multiplier) {
         return new Money(this.amount*multiplier, this.currency);
     }
 
@@ -44,12 +44,13 @@ public class Money implements Expression{
                 '}';
     }
 
-    public Expression plus(Money addend) {
+    public Expression plus(Expression addend) {
         return new Sum(this,addend);
     }
 
     @Override
-    public Money reduce(String currency){
-        return this;
+    public Money reduce(Bank bank, String toCurrency){
+        int rate = bank.rate(this.currency,toCurrency);
+        return new Money(this.amount/rate, toCurrency);
     }
 }

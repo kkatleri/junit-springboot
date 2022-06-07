@@ -18,12 +18,12 @@ public class MoneyTest {
 
     @Test
     void testEquality() {
-        assertTrue(Money.dollar(5).equals(Money.dollar(5)));
-        assertFalse(Money.dollar(5).equals(Money.dollar(10)));
-        assertFalse(Money.dollar(5).equals(Money.franc(5)));
+        assertEquals(Money.dollar(5), Money.dollar(5));
+        assertNotEquals(Money.dollar(5), Money.dollar(10));
+        assertNotEquals(Money.dollar(5), Money.franc(5));
 
-        assertTrue(Money.franc(5).equals(Money.franc(5)));
-        assertFalse(Money.franc(5).equals(Money.franc(10)));
+        assertEquals(Money.franc(5), Money.franc(5));
+        assertNotEquals(Money.franc(5), Money.franc(10));
 
     }
 
@@ -65,4 +65,50 @@ public class MoneyTest {
         Bank bank = new Bank();
         assertEquals(Money.dollar(5), bank.reduce(five,"USD"));
     }
+
+    @Test
+    void testReduceMoneyDifferentCurrencies() {
+        Bank bank = new Bank();
+        bank.addRate("CHF","USD",2);
+        Money result = bank.reduce(Money.franc(2),"USD");
+        assertEquals(Money.dollar(1),result);
+    }
+
+    @Test
+    void testIdentityRate() {
+        assertEquals(1, new Bank().rate("USD","USD"));
+    }
+
+    @Test
+    void testMixedAddition() {
+        Expression fiveDollars = Money.dollar(5);
+        Expression tenFrancs = Money.franc(10);
+        Bank bank = new Bank();
+        bank.addRate("CHF","USD",2);
+        Money result = bank.reduce(fiveDollars.plus(tenFrancs),"USD");
+        assertEquals(Money.dollar(10),result);
+     }
+
+    @Test
+    void testSumPlusMoney() {
+        Expression fiveDollars = Money.dollar(5);
+        Expression tenFrancs = Money.franc(10);
+        Bank bank = new Bank();
+        bank.addRate("CHF","USD",2);
+        Expression sum = new Sum(fiveDollars,tenFrancs).plus(fiveDollars);
+        Money result = bank.reduce(sum,"USD");
+        assertEquals(Money.dollar(15),result);
+    }
+
+    @Test
+    void testSumTimesMoney() {
+        Expression fiveDollars = Money.dollar(5);
+        Expression tenFrancs = Money.franc(10);
+        Bank bank = new Bank();
+        bank.addRate("CHF","USD",2);
+        Expression sum = new Sum(fiveDollars,tenFrancs).times(2);
+        Money result = bank.reduce(sum,"USD");
+        assertEquals(Money.dollar(20),result);
+    }
+
 }

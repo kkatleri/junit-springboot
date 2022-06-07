@@ -1,5 +1,9 @@
 package com.autobots;
 
 public interface Expression {
-    Money reduce(String currency);
+    Money reduce(Bank bank, String toCurrency);
+
+    Expression plus(Expression addend);
+
+    Expression times(int multiplier);
 }
