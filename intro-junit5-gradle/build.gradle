@@ -1,0 +1,26 @@
+plugins {
+    id 'java'
+}
+
+group 'com.autobots'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.1'
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.3.1'
+}
+
+test {
+    useJUnitPlatform()
+    testLogging.showStandardStreams = true /*for noisy output*/
+
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
